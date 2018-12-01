@@ -12,6 +12,9 @@ data FrequencyChange
   | Dec Int
   deriving (Eq, Show)
 
+initialFrequency :: Frequency
+initialFrequency = 0
+
 parseFrequencyChange :: Text -> FrequencyChange
 parseFrequencyChange s =
   case unpack s of
@@ -30,10 +33,9 @@ applyFrequencyChange :: Frequency -> FrequencyChange -> Frequency
 applyFrequencyChange x (Inc dx) = x + dx
 applyFrequencyChange x (Dec dx) = x - dx
 
-solve :: Text -> Text
-solve input =
-  pack . show $ foldl f 0 $ T.lines input
+partOne' :: [FrequencyChange] -> Frequency
+partOne' = foldl applyFrequencyChange initialFrequency
 
-  where
-    f :: Frequency -> Text -> Frequency
-    f x s = applyFrequencyChange x (parseFrequencyChange s)
+partOne :: Text -> Text
+partOne input =
+  pack . show $ partOne' $ map parseFrequencyChange $ T.lines input

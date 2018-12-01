@@ -10,5 +10,5 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ("01":_) -> TIO.interact Day01.solve
-    _ ->  die "Must supply day to run as argument (01-25)"
+    ("01":"p1":_) -> TIO.interact Day01.partOne
+    _ ->  die "Must supply day (01-25) and part (p1, p2) as arguments"
