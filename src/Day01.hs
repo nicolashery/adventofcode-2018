@@ -9,11 +9,7 @@ import qualified Data.Text as T
 import Text.Read (readMaybe)
 
 type Frequency = Int
-
-data FrequencyChange
-  = Inc Int
-  | Dec Int
-  deriving (Eq, Show)
+type FrequencyChange = Int
 
 initialFrequency :: Frequency
 initialFrequency = 0
@@ -21,8 +17,8 @@ initialFrequency = 0
 parseFrequencyChange :: Text -> FrequencyChange
 parseFrequencyChange s =
   case unpack s of
-    ('+':xs) -> Inc (read' xs)
-    ('-':xs) -> Dec (read' xs)
+    ('+':xs) -> read' xs
+    ('-':xs) -> negate $ read' xs
     _ -> parseError
 
   where
@@ -32,12 +28,8 @@ parseFrequencyChange s =
       "expected frequency change to be of format '+' or '-'"
       ++ " followed by an integer, got '" ++ unpack s ++ "'"
 
-applyFrequencyChange :: Frequency -> FrequencyChange -> Frequency
-applyFrequencyChange x (Inc dx) = x + dx
-applyFrequencyChange x (Dec dx) = x - dx
-
 partOne' :: [FrequencyChange] -> Frequency
-partOne' = foldl' applyFrequencyChange initialFrequency
+partOne' = foldl' (+) initialFrequency
 
 partTwo' :: [FrequencyChange] -> Frequency
 partTwo' =
@@ -53,7 +45,7 @@ partTwo' =
       else go seen' (iterations + 1) frequency' futureChanges
       where
         seen' = S.insert frequency seen
-        frequency' = applyFrequencyChange frequency change
+        frequency' = frequency + change
 
     maxIterationsError = error $
       "could not find a frequency reached twice after"
