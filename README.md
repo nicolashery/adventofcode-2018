@@ -1,6 +1,6 @@
 # Advent of Code 2018
 
-My solutions to the puzzles in [Advent of Code 2018](https://adventofcode.com/2018).
+My solutions to the puzzles in [Advent of Code 2018](https://adventofcode.com/2018), in [Haskell](https://www.haskell.org/).
 
 ## Quick start
 
