@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+DAY=$1
+PART=$2
+
+ANSWER=$(cat data/day$DAY-input.txt | stack run -- adventofcode $DAY $PART)
+echo $ANSWER > data/day$DAY-answer-$PART.txt
+echo $ANSWER

@@ -57,7 +57,7 @@ partTwo' =
 
     maxIterationsError = error $
       "could not find a frequency reached twice after"
-      ++ " 10000 iterations"
+      ++ " 1000000 iterations"
     inputExhaustedError = error $
       "could not find a frequency reached twice after"
       ++ " exhausting all frequency changes"
