@@ -3,7 +3,7 @@ module Day02Spec where
 import qualified Data.Text as T
 import Test.Hspec
 
-import Day02 (partOne)
+import Day02 (partOne, partTwo)
 
 spec :: Spec
 spec = do
@@ -20,3 +20,16 @@ spec = do
             , "ababab"
             ]
       partOne boxes `shouldBe` "12"
+
+  describe "part two" $ do
+    it "works for first example" $ do
+      let boxes = T.unlines $
+            [ "abcde"
+            , "fghij"
+            , "klmno"
+            , "pqrst"
+            , "fguij"
+            , "axcye"
+            , "wvxyz"
+            ]
+      partTwo boxes `shouldBe` "fgij"
