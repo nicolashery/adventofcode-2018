@@ -5,6 +5,7 @@ import System.Environment (getArgs)
 import System.Exit (die)
 
 import qualified Day01
+import qualified Day02
 
 main :: IO ()
 main = do
@@ -12,4 +13,5 @@ main = do
   case args of
     ("01":"p1":_) -> TIO.interact Day01.partOne
     ("01":"p2":_) -> TIO.interact Day01.partTwo
+    ("02":"p1":_) -> TIO.interact Day02.partOne
     _ ->  die "Must supply day (01-25) and part (p1, p2) as arguments"
