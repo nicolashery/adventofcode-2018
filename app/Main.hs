@@ -6,6 +6,7 @@ import System.Exit (die)
 
 import qualified Day01
 import qualified Day02
+import qualified Day03
 
 main :: IO ()
 main = do
@@ -15,4 +16,5 @@ main = do
     ("01":"p2":_) -> TIO.interact Day01.partTwo
     ("02":"p1":_) -> TIO.interact Day02.partOne
     ("02":"p2":_) -> TIO.interact Day02.partTwo
+    ("03":"p1":_) -> TIO.interact $ Day03.partOne 1000
     _ ->  die "Must supply day (01-25) and part (p1, p2) as arguments"

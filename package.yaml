@@ -14,6 +14,8 @@ default-extensions:
 dependencies:
   - base >= 4.7 && < 5
   - containers
+  - matrix
+  - parsec
   - text
 
 library:
