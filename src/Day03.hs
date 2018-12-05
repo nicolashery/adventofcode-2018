@@ -1,15 +1,17 @@
 module Day03 where
 
-import Data.Bool (bool)
 import Data.List (foldl')
-import Data.Matrix (Matrix, elementwise, matrix, prettyMatrix, transpose, zero)
 import Data.Text (Text, pack, unpack)
 import qualified Data.Text as T
+import Data.Vector (Vector)
+import qualified Data.Vector as V
 import Text.Parsec (ParseError, many1, parse)
 import Text.Parsec.Char (char, digit, string)
 import Text.Parsec.Text (Parser)
 
 type FabricSize = Int
+
+type Fabric = Vector (Vector Int)
 
 data Claim = Claim
   { claimId :: Text
@@ -57,38 +59,37 @@ parseClaim input = onLeftError $ parse claimParser "" input
       , show err
       ]
 
-putMatrixLn :: (Show a) => Matrix a -> IO ()
-putMatrixLn = putStrLn . prettyMatrix . transpose
+initialFabric :: FabricSize -> Fabric
+initialFabric size = V.replicate size (V.replicate size 0)
 
-matrixAddition :: (Num a) => Matrix a -> Matrix a -> Matrix a
-matrixAddition = elementwise (+)
-
-initialFabric :: FabricSize -> Matrix Int
-initialFabric size = zero size size
-
-claimToMatrix :: FabricSize -> Claim -> Matrix Int
-claimToMatrix size c = matrix size size generator
+pointBelongsToClaim :: Claim -> (Int, Int) -> Bool
+pointBelongsToClaim c (x, y) =
+  x > cX && x <= cX + cW &&
+  y > cY && y <= cY + cH
   where
-    generator :: (Int, Int) -> Int
-    generator (x, y) = bool 0 1 pointBelongsToClaim
-      where
-        pointBelongsToClaim =
-          x > cX && x <= cX + cW &&
-          y > cY && y <= cY + cH
-        cX = claimX c
-        cY = claimY c
-        cW = claimW c
-        cH = claimH c
+    cX = claimX c
+    cY = claimY c
+    cW = claimW c
+    cH = claimH c
+
+applyClaim :: Fabric -> Claim -> Fabric
+applyClaim fabric claim = V.imap (\x ys -> V.imap (f x) ys) fabric
+  where
+    f :: Int -> Int -> Int -> Int
+    f x y count =
+      if pointBelongsToClaim claim (x, y) then count + 1 else count
 
 partOne' :: FabricSize -> [Claim] -> Int
-partOne' size claims = foldl' (+) 0 overlap
+partOne' size claims = V.foldl' (\z ys -> V.foldl' (+) z ys) 0 overlap
   where
-    overlayed :: Matrix Int
-    overlayed = foldl' f (initialFabric size) claims
-      where f b a = matrixAddition b (claimToMatrix size a)
+    initial :: Fabric
+    initial = initialFabric size
 
-    overlap :: Matrix Int
-    overlap = fmap (\n -> if n > 1 then 1 else 0) overlayed
+    overlayed :: Fabric
+    overlayed = foldl' applyClaim initial claims
+
+    overlap :: Fabric
+    overlap = V.map (\ys -> V.map (\n -> if n > 1 then 1 else 0) ys) overlayed
 
 partOne :: FabricSize -> Text -> Text
 partOne fabricSize =
