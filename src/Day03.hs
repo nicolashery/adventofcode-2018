@@ -1,10 +1,12 @@
-module Day03 (partOne) where
+module Day03 (partOne, partTwo) where
 
 import Control.Monad (forM_)
 import Control.Monad.ST (runST)
+import Data.List (all, findIndex)
+import Data.Maybe (maybe)
 import Data.Text (Text, pack, unpack)
 import qualified Data.Text as T
-import Data.Vector (Vector)
+import Data.Vector (Vector, (!))
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as MV
 import Text.Parsec (ParseError, many1, parse)
@@ -75,20 +77,48 @@ claimFabricIndices size = map (pointToFabricIndex size) . claimPoints
 pointToFabricIndex :: FabricSize -> (Int, Int) -> Int
 pointToFabricIndex size (x, y) = y * size + x
 
-fabricWithOverlappedClaims :: FabricSize -> [Claim] -> Fabric
-fabricWithOverlappedClaims size claims = runST $ do
+fabricWithOverlappedClaims :: FabricSize -> [[Int]] -> Fabric
+fabricWithOverlappedClaims size claimsIndices = runST $ do
   let fabricLength = size * size
   fabric <- MV.replicate fabricLength 0
-  forM_ claims $ \claim ->
-    forM_ (claimFabricIndices size claim) $ \i ->
+  forM_ claimsIndices $ \claimIndices ->
+    forM_ claimIndices $ \i ->
       MV.modify fabric (+1) i
   forM_ [0 .. fabricLength - 1] $ \i ->
     MV.modify fabric (\n -> if n > 1 then 1 else 0) i
   V.freeze fabric
 
 partOne' :: FabricSize -> [Claim] -> Int
-partOne' size claims = V.foldl' (+) 0 $ fabricWithOverlappedClaims size claims
+partOne' size claims =
+  V.foldl' (+) 0 $ fabricWithOverlappedClaims size claimsIndices
+
+  where
+    claimsIndices :: [[Int]]
+    claimsIndices = map (claimFabricIndices size) claims
+
+partTwo' :: FabricSize -> [Claim] -> Int
+partTwo' size claims =
+  maybe notFoundError indexToClaimId $ findIndex isClaimIntact claimsIndices
+
+  where
+    isClaimIntact :: [Int] -> Bool
+    isClaimIntact = all (\i -> overlapped ! i == 0)
+
+    overlapped :: Fabric
+    overlapped = fabricWithOverlappedClaims size claimsIndices
+
+    claimsIndices :: [[Int]]
+    claimsIndices = map (claimFabricIndices size) claims
+
+    indexToClaimId :: Int -> Int
+    indexToClaimId i = i + 1
+
+    notFoundError = error "could not find an intact claim"
 
 partOne :: FabricSize -> Text -> Text
 partOne fabricSize =
   pack . show . partOne' fabricSize . map parseClaim . T.lines
+
+partTwo :: FabricSize -> Text -> Text
+partTwo fabricSize =
+  pack . show . partTwo' fabricSize . map parseClaim . T.lines
