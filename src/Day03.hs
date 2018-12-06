@@ -1,17 +1,19 @@
 module Day03 where
 
-import Data.List (foldl')
+import Control.Monad (forM_)
+import Control.Monad.ST (runST)
 import Data.Text (Text, pack, unpack)
 import qualified Data.Text as T
 import Data.Vector (Vector)
 import qualified Data.Vector as V
+import qualified Data.Vector.Mutable as MV
 import Text.Parsec (ParseError, many1, parse)
 import Text.Parsec.Char (char, digit, string)
 import Text.Parsec.Text (Parser)
 
 type FabricSize = Int
 
-type Fabric = Vector (Vector Int)
+type Fabric = Vector Int
 
 data Claim = Claim
   { claimId :: Text
@@ -59,37 +61,46 @@ parseClaim input = onLeftError $ parse claimParser "" input
       , show err
       ]
 
-initialFabric :: FabricSize -> Fabric
-initialFabric size = V.replicate size (V.replicate size 0)
-
 pointBelongsToClaim :: Claim -> (Int, Int) -> Bool
 pointBelongsToClaim c (x, y) =
-  x > cX && x <= cX + cW &&
-  y > cY && y <= cY + cH
+  x >= cX && x < cX + cW &&
+  y >= cY && y < cY + cH
   where
     cX = claimX c
     cY = claimY c
     cW = claimW c
     cH = claimH c
 
-applyClaim :: Fabric -> Claim -> Fabric
-applyClaim fabric claim = V.imap (\x ys -> V.imap (f x) ys) fabric
+claimPoints :: Claim -> Vector (Int, Int)
+claimPoints c = V.generate (cW * cH) f
   where
-    f :: Int -> Int -> Int -> Int
-    f x y count =
-      if pointBelongsToClaim claim (x, y) then count + 1 else count
+    f :: Int -> (Int, Int)
+    f i = (cX + i `mod` cW, cY + i `mod` cH)
+
+    cX = claimX c
+    cY = claimY c
+    cW = claimW c
+    cH = claimH c
+
+claimFabricIndices :: FabricSize -> Claim -> Vector Int
+claimFabricIndices size = V.map (pointToFabricIndex size) . claimPoints
+
+pointToFabricIndex :: FabricSize -> (Int, Int) -> Int
+pointToFabricIndex size (x, y) = y * size + x
+
+fabricWithOverlappedClaims :: FabricSize -> [Claim] -> Fabric
+fabricWithOverlappedClaims size claims = runST $ do
+  let fabricLength = size * size
+  fabric <- MV.replicate fabricLength 0
+  forM_ claims $ \claim ->
+    forM_ (claimFabricIndices size claim) $ \i ->
+      MV.modify fabric (+1) i
+  forM_ [0 .. fabricLength - 1] $ \i ->
+    MV.modify fabric (\n -> if n > 1 then 1 else 0) i
+  V.freeze fabric
 
 partOne' :: FabricSize -> [Claim] -> Int
-partOne' size claims = V.foldl' (\z ys -> V.foldl' (+) z ys) 0 overlap
-  where
-    initial :: Fabric
-    initial = initialFabric size
-
-    overlayed :: Fabric
-    overlayed = foldl' applyClaim initial claims
-
-    overlap :: Fabric
-    overlap = V.map (\ys -> V.map (\n -> if n > 1 then 1 else 0) ys) overlayed
+partOne' size claims = V.foldl' (+) 0 $ fabricWithOverlappedClaims size claims
 
 partOne :: FabricSize -> Text -> Text
 partOne fabricSize =
