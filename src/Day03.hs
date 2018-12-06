@@ -1,4 +1,4 @@
-module Day03 where
+module Day03 (partOne) where
 
 import Control.Monad (forM_)
 import Control.Monad.ST (runST)
@@ -61,29 +61,16 @@ parseClaim input = onLeftError $ parse claimParser "" input
       , show err
       ]
 
-pointBelongsToClaim :: Claim -> (Int, Int) -> Bool
-pointBelongsToClaim c (x, y) =
-  x >= cX && x < cX + cW &&
-  y >= cY && y < cY + cH
+claimPoints :: Claim -> [(Int, Int)]
+claimPoints c = [(x, y) | x <- [xMin..xMax], y <- [yMin..yMax]]
   where
-    cX = claimX c
-    cY = claimY c
-    cW = claimW c
-    cH = claimH c
+    xMin = claimX c
+    xMax = claimX c + claimW c - 1
+    yMin = claimY c
+    yMax = claimY c + claimH c - 1
 
-claimPoints :: Claim -> Vector (Int, Int)
-claimPoints c = V.generate (cW * cH) f
-  where
-    f :: Int -> (Int, Int)
-    f i = (cX + i `mod` cW, cY + i `mod` cH)
-
-    cX = claimX c
-    cY = claimY c
-    cW = claimW c
-    cH = claimH c
-
-claimFabricIndices :: FabricSize -> Claim -> Vector Int
-claimFabricIndices size = V.map (pointToFabricIndex size) . claimPoints
+claimFabricIndices :: FabricSize -> Claim -> [Int]
+claimFabricIndices size = map (pointToFabricIndex size) . claimPoints
 
 pointToFabricIndex :: FabricSize -> (Int, Int) -> Int
 pointToFabricIndex size (x, y) = y * size + x

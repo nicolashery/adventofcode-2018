@@ -1,4 +1,4 @@
-module Day02 where
+module Day02 (partOne, partTwo) where
 
 import Data.Bool (bool)
 import Data.List (group, sort, tails)

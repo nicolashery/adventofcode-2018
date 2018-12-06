@@ -1,4 +1,4 @@
-module Day01 where
+module Day01 (partOne, partTwo) where
 
 import Data.List (cycle, foldl')
 import Data.Maybe (fromMaybe)
