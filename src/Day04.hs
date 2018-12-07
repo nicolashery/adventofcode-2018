@@ -1,4 +1,4 @@
-module Day04 (partOne) where
+module Day04 (partOne, partTwo) where
 
 import Data.List (foldl', sort, sortOn)
 import Data.Map.Strict (Map)
@@ -146,8 +146,30 @@ partOne' records = guardMostAsleep * minuteMostAsleep
       head $ sortOn (negate . totalSleep . snd) $
       M.assocs schedules
 
-    totalSleep :: GuardSchedule -> Int
+    totalSleep :: GuardSchedule -> AsleepCount
     totalSleep = M.foldl' (+) 0
+
+    schedules :: AllSchedules
+    schedules = buildSchedules records
+
+partTwo' :: [Record] -> Int
+partTwo' records = guard * minute
+  where
+    guard :: Guard
+    guard = fst guardWithMinuteMostAsleep
+
+    minute :: Minute
+    minute = snd guardWithMinuteMostAsleep
+
+    guardWithMinuteMostAsleep :: (Guard, Minute)
+    guardWithMinuteMostAsleep =
+      let (g, (m, _)) =
+            head $ sortOn (negate . snd . snd) $
+            M.assocs $ M.map minuteMostAsleep schedules
+      in (g, m)
+
+    minuteMostAsleep :: GuardSchedule -> (Minute, AsleepCount)
+    minuteMostAsleep = head . sortOn (negate . snd) . M.assocs
 
     schedules :: AllSchedules
     schedules = buildSchedules records
@@ -155,3 +177,7 @@ partOne' records = guardMostAsleep * minuteMostAsleep
 partOne :: Text -> Text
 partOne =
   pack . show . partOne' . map parseRecord . T.lines
+
+partTwo :: Text -> Text
+partTwo =
+  pack . show . partTwo' . map parseRecord . T.lines
