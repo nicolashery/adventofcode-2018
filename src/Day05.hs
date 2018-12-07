@@ -1,6 +1,7 @@
-module Day05 (partOne) where
+module Day05 (partOne, partTwo) where
 
-import Data.Char (isLower, isUpper, toLower)
+import Data.Char (isLower, isUpper, toLower, toUpper)
+import Data.List (nub)
 import Data.Text (Text, pack, unpack)
 
 type PolymerUnit = Char
@@ -32,5 +33,27 @@ reduce original = go [] original
 partOne' :: Polymer -> Int
 partOne' = length . reduce
 
+uniquePolymerLowerUnits :: Polymer -> [PolymerUnit]
+uniquePolymerLowerUnits =  nub . map toLower
+
+removeLowerUnit :: Polymer -> PolymerUnit -> Polymer
+removeLowerUnit polymer filteredLowerUnit =
+  filter (not . isFilteredUnit) polymer
+
+  where
+    isFilteredUnit :: PolymerUnit -> Bool
+    isFilteredUnit x =
+      x == filteredLowerUnit || x == toUpper filteredLowerUnit
+
+partTwo' :: Polymer -> Int
+partTwo' original =
+  minimum $ map f $ uniquePolymerLowerUnits original
+  where
+    f :: PolymerUnit -> Int
+    f = length . reduce . removeLowerUnit original
+
 partOne :: Text -> Text
 partOne = pack . show . partOne' . unpack
+
+partTwo :: Text -> Text
+partTwo = pack . show . partTwo' . unpack
