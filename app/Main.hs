@@ -8,6 +8,7 @@ import qualified Day01
 import qualified Day02
 import qualified Day03
 import qualified Day04
+import qualified Day05
 
 main :: IO ()
 main = do
@@ -21,4 +22,5 @@ main = do
     ("03":"p2":_) -> TIO.interact $ Day03.partTwo 1000
     ("04":"p1":_) -> TIO.interact Day04.partOne
     ("04":"p2":_) -> TIO.interact Day04.partTwo
+    ("05":"p1":_) -> TIO.interact Day05.partOne
     _ ->  die "Must supply day (01-25) and part (p1, p2) as arguments"
