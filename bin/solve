@@ -4,5 +4,5 @@ DAY=$1
 PART=$2
 
 ANSWER=$(cat data/day$DAY-input.txt | stack run -- adventofcode $DAY $PART)
-echo $ANSWER > data/day$DAY-answer-$PART.txt
-echo $ANSWER
+printf "$ANSWER\n" > data/day$DAY-answer-$PART.txt
+printf "$ANSWER\n"
