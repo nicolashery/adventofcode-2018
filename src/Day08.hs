@@ -1,7 +1,7 @@
-module Day08 (partOne) where
+module Day08 (partOne, partTwo) where
 
 import Data.Text (Text, pack, unpack)
-import Data.Tree (Tree(..))
+import Data.Tree (Tree(..), foldTree)
 
 type Metadata = [Int]
 
@@ -38,5 +38,19 @@ buildChildren count (childCount:metaCount:xs) = (child:otherChildren, rest)
 partOne' :: [Int] -> Int
 partOne' = foldr ((+) . sum) 0 . buildTree
 
+nodeValue :: Metadata -> [Int] -> Int
+nodeValue metadata [] = sum metadata
+nodeValue metadata childrenValues = foldr f 0 metadata
+  where
+    f childRef total
+      | childRef == 0 || childRef > length childrenValues = total
+      | otherwise = total + childrenValues !! (childRef - 1)
+
+partTwo' :: [Int] -> Int
+partTwo' = foldTree nodeValue . buildTree
+
 partOne :: Text -> Text
 partOne = pack . show . partOne' . parseInput
+
+partTwo :: Text -> Text
+partTwo = pack . show . partTwo' . parseInput
