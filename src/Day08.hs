@@ -30,10 +30,10 @@ buildChildren count (childCount:metaCount:xs) = (child:otherChildren, rest)
       }
     (grandChildren, restAfterGrandChildren) =
       buildChildren childCount xs
-    (otherChildren, restAfterOtherChildren) =
-      buildChildren (count - 1) restAfterGrandChildren
-    metadata = take metaCount restAfterOtherChildren
-    rest = drop metaCount restAfterOtherChildren
+    metadata = take metaCount restAfterGrandChildren
+    restAfterMetadata = drop metaCount restAfterGrandChildren
+    (otherChildren, rest) =
+      buildChildren (count - 1) restAfterMetadata
 
 partOne' :: [Int] -> Int
 partOne' = foldr ((+) . sum) 0 . buildTree
