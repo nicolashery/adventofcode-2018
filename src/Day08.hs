@@ -18,15 +18,15 @@ buildChildren _ (_:[]) = error "invalid tree input"
 buildChildren count (0:metaCount:xs) = (child:otherChildren, rest)
   where
     child = Node
-      { rootLabel = take metaCount xs,
-        subForest = []
+      { rootLabel = take metaCount xs
+      , subForest = []
       }
     (otherChildren, rest) = buildChildren (count - 1) (drop metaCount xs)
 buildChildren count (childCount:metaCount:xs) = (child:otherChildren, rest)
   where
     child = Node
-      { rootLabel = metadata,
-        subForest = grandChildren
+      { rootLabel = metadata
+      , subForest = grandChildren
       }
     (grandChildren, restAfterGrandChildren) =
       buildChildren childCount xs
