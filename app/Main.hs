@@ -29,4 +29,5 @@ main = do
     ("08":"p1":_) -> TIO.interact Day08.partOne
     ("08":"p2":_) -> TIO.interact Day08.partTwo
     ("09":"p1":_) -> TIO.interact Day09.partOne
+    ("09":"p2":_) -> TIO.interact Day09.partTwo
     _ ->  die "Must supply day (01-25) and part (p1, p2) as arguments"

@@ -1,9 +1,10 @@
 module Day09Spec where
 
 import qualified Data.Map.Strict as M
+import qualified Data.Sequence as S
 import Test.Hspec
 
-import Day09 (displayCircle, partOne, turn)
+import Day09 (displayCircle, displayCircleSeq, partOne, partTwo, turn, turnSeq)
 
 spec :: Spec
 spec = do
@@ -25,6 +26,25 @@ spec = do
           `shouldBe`
           "0  16  8  17  4  18  (19)  2  20  10  21  5  22  11  1  12  6  13  3  14  7  15"
 
+  describe "turnSeq" $ do
+    it "works for normal marble" $ do
+      let circle = S.fromList [0,16,8,17,4,18,9,19,2,20,10,21,5,11,1,12,6,13,3,14,7,15]
+          current = 11
+          marble = 22
+          (circle', current', _) = turnSeq (circle, current, M.empty) 1 marble
+      displayCircleSeq circle' current'
+        `shouldBe`
+        "0  16  8  17  4  18  9  19  2  20  10  21  5  (22)  11  1  12  6  13  3  14  7  15"
+
+    it "works for multiple of 23 marble" $ do
+        let circle = S.fromList [0,16,8,17,4,18,9,19,2,20,10,21,5,22,11,1,12,6,13,3,14,7,15]
+            current = 13
+            marble = 23
+            (circle', current', _) = turnSeq (circle, current, M.empty) 1 marble
+        displayCircleSeq circle' current'
+          `shouldBe`
+          "0  16  8  17  4  18  (19)  2  20  10  21  5  22  11  1  12  6  13  3  14  7  15"
+
   describe "part one" $ do
     it "works for example in instructions " $ do
       partOne "9 players; last marble is worth 25 points" `shouldBe` "32"
@@ -34,3 +54,13 @@ spec = do
 
     it "works for second example" $ do
       partOne "17 players; last marble is worth 1104 points" `shouldBe` "2764"
+
+  describe "part two" $ do
+      it "works for example in instructions " $ do
+        partTwo "9 players; last marble is worth 25 points" `shouldBe` "32"
+
+      it "works for first example" $ do
+        partTwo "10 players; last marble is worth 1618 points" `shouldBe` "8317"
+
+      it "works for second example" $ do
+        partTwo "17 players; last marble is worth 1104 points" `shouldBe` "2764"
