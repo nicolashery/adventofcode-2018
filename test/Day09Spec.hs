@@ -57,10 +57,4 @@ spec = do
 
   describe "part two" $ do
       it "works for example in instructions " $ do
-        partTwo "9 players; last marble is worth 25 points" `shouldBe` "32"
-
-      it "works for first example" $ do
-        partTwo "10 players; last marble is worth 1618 points" `shouldBe` "8317"
-
-      it "works for second example" $ do
-        partTwo "17 players; last marble is worth 1104 points" `shouldBe` "2764"
+        partTwo "9 players; last marble is worth 25 points" `shouldBe` "22563"
