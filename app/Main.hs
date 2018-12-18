@@ -9,6 +9,7 @@ import qualified Day02
 import qualified Day03
 import qualified Day04
 import qualified Day05
+import qualified Day07
 import qualified Day08
 import qualified Day09
 
@@ -26,6 +27,7 @@ main = do
     ("04":"p2":_) -> TIO.interact Day04.partTwo
     ("05":"p1":_) -> TIO.interact Day05.partOne
     ("05":"p2":_) -> TIO.interact Day05.partTwo
+    ("07":"p1":_) -> TIO.interact Day07.partOne
     ("08":"p1":_) -> TIO.interact Day08.partOne
     ("08":"p2":_) -> TIO.interact Day08.partTwo
     ("09":"p1":_) -> TIO.interact Day09.partOne
