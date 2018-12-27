@@ -3,7 +3,7 @@ module Day06Spec where
 import qualified Data.Text as T
 import Test.Hspec
 
-import Day06 (partOne)
+import Day06 (partOne, partTwo)
 
 spec :: Spec
 spec = do
@@ -18,4 +18,8 @@ spec = do
 
   describe "part one" $ do
     it "works for first example" $ do
-      partOne locations `shouldBe` "17"
+      partOne 10 locations `shouldBe` "17"
+
+  describe "part two" $ do
+    it "works for first example" $ do
+      partTwo 10 32 locations `shouldBe` "16"

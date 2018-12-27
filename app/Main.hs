@@ -28,7 +28,8 @@ main = do
     ("04":"p2":_) -> TIO.interact Day04.partTwo
     ("05":"p1":_) -> TIO.interact Day05.partOne
     ("05":"p2":_) -> TIO.interact Day05.partTwo
-    ("06":"p1":_) -> TIO.interact Day06.partOne
+    ("06":"p1":_) -> TIO.interact $ Day06.partOne 100
+    ("06":"p2":_) -> TIO.interact $ Day06.partTwo 300 10000
     ("07":"p1":_) -> TIO.interact Day07.partOne
     ("07":"p2":_) -> TIO.interact $ Day07.partTwo 5 60
     ("08":"p1":_) -> TIO.interact Day08.partOne
